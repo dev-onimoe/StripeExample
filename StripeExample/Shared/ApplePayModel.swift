@@ -16,7 +16,9 @@ class MyApplePayBackendModel: NSObject, ObservableObject, ApplePayContextDelegat
   func pay() {
     // Configure a payment request
     let pr = StripeAPI.paymentRequest(withMerchantIdentifier: "merchant.com.tourchtest", country: "US", currency: "USD")
-
+      
+      //merchant.com.tourchtest
+      //merchant.com.tourchride
     // You'd generally want to configure at least `.postalAddress` here.
     // We don't require anything here, as we don't want to enter an address
     // in CI.
@@ -49,16 +51,27 @@ class MyApplePayBackendModel: NSObject, ObservableObject, ApplePayContextDelegat
   }
 
     func applePayContext(_ context: STPApplePayContext, didCreatePaymentMethod paymentMethod: StripeAPI.PaymentMethod, paymentInformation: PKPayment, completion: @escaping STPIntentClientSecretCompletionBlock) {
+      
+        let code = "EN" //
+        let user_id = "DRI170903970996"
+        let amount: Double = 10.99
+
         // When the Apple Pay sheet is confirmed, create a PaymentIntent on your backend from the provided PKPayment information.
-        BackendModel.shared.fetchPaymentIntent { secret in
-          if let clientSecret = secret {
-            // Call the completion block with the PaymentIntent's client secret.
-            completion(clientSecret, nil)
-          } else {
-            completion(nil, NSError())  // swiftlint:disable:this discouraged_direct_init
-          }
+        
+       
+        BackendModel.shared.fetchPaymentIntent(code: code, user_id: user_id, amount: amount) { secret in
+            if let clientSecret = secret {
+                // Call the completion block with the PaymentIntent's client secret.
+                print("clientSecret:"  + clientSecret);
+                
+        
+                completion(clientSecret, nil)
+            } else {
+                completion(nil, NSError())  // swiftlint:disable:this discouraged_direct_init
+            }
         }
     }
+
 
     func applePayContext(_ context: STPApplePayContext, didCompleteWith status: STPApplePayContext.PaymentStatus, error: Error?) {
         // When the payment is complete, display the status.
